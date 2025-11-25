@@ -1,5 +1,6 @@
 import { useState } from "react"
 import TodoItem from "./TodoItem";
+import { Plus, Search, SortAsc, Trash, BrushCleaning, Rabbit } from "lucide-react";
 
 const TodoPage = () => {
 
@@ -27,6 +28,7 @@ const TodoPage = () => {
         e.preventDefault();
         const todoText = e.target["todo"].value
         console.log(todoText);
+        if(!todoText || todoText.trim()=='') return;
 
         // todos.push(todoText)//wrong way
         const newTodos = [...todos,{
@@ -70,8 +72,10 @@ const TodoPage = () => {
         setTodos(newTodos)
     }
 
-    const emptyState = (
-        <h2>Nothing's Here, Add a todo</h2>
+    const emptyState = (<div className="flex flex-col gap-8 items-center text-secondary mt-18">
+        <Rabbit/>
+        <p>Your Todos are empty</p>
+    </div>
     )
     const completedTodos = todos.filter(item => item.completed).length
 
@@ -88,6 +92,7 @@ const TodoPage = () => {
     }
 
     function handleUpdateTodoText(id,todoText) {
+        if(!todoText || todoText.trim()=='') return;
         const newTodos = todos.map(item => {
             if(item.id===id){
                 return {...item,text:todoText};
@@ -145,26 +150,29 @@ const TodoPage = () => {
         return true;
     })
   return (
-    <div>
-        <h1 className="bg-red-500">Super Todo</h1>
-
-        <form action="" onSubmit={handleFormSubmit}>
+    <div className="max-w-2xl mx-auto p-10 lg:p-12 space-y-6">
+        <h1 className=" text-center font-display text-6xl font-bold text-accent">Super Todo</h1>
+        <p className="text-center text-lg font-light text-secondary">Manage your Todos with Ease</p>
+        <form className="bg-gray-700 px-6 py-4 rounded-lg flex justify-between gap-4" action="" onSubmit={handleFormSubmit}>
             <input 
             type="text" 
             name="todo" 
             placeholder="Enter Your Todo here..." 
+            className="flex-1 font-body focus:outline-none"
+            required
             />
-            <button>Submit</button>
+            <button className="p-3 bg-accent text-black rounded-lg cursor-pointer hover:bg-accent-hover"> <Plus /> </button>
         </form>
 
         {!isTodoEmpty &&
-            <form onSubmit={handleSearchTodo}>
+            <form className="bg-gray-700 px-6 py-4 rounded-lg flex justify-between gap-4" onSubmit={handleSearchTodo}>
                 <input
                 type="text"
                 name="search"
                 placeholder="Search Todo"
+                className="flex-1 font-body focus:outline-none"
                 />
-                <button>Search</button>
+                <button className="p-3 bg-accent text-black rounded-lg cursor-pointer hover:bg-accent-hover"> <Search/> </button>
             </form>
         }
         {searchTodo!='' &&
@@ -179,16 +187,36 @@ const TodoPage = () => {
             todosCount={1}
             />
         }
+        <div className="flex justify-center items-center">
         {searchTodo!='' &&
-            <button onClick={handleClearSearch}>Clear Search</button>
+            <button className="px-4 py-2 ring-2 ring-accent rounded-lg flex items-center gap-2
+            hover:bg-yellow-400 hover:text-black cursor-pointer" onClick={handleClearSearch}>
+                <BrushCleaning />
+                Clear Search
+                </button>
         }
-        {!isSortedTodos &&
-            <button onClick={handleSortTodos}>Sort Todos</button>
+        </div>
+        <div className="flex justify-center gap-6">
+            {!isSortedTodos &&
+            <button className="px-4 py-2 ring-2 ring-accent rounded-lg flex items-center gap-2
+            hover:bg-yellow-400 hover:text-black cursor-pointer" onClick={handleSortTodos}>
+                <SortAsc/>
+                Sort Todos
+                </button>
         }
 
+        {!isTodoEmpty && <button className="px-4 py-2 ring-2 ring-red-400 rounded-lg flex items-center gap-2
+         hover:bg-red-400 hover:text-black cursor-pointer" onClick={handleDeleteAll}> 
+            <Trash />
+            Delete All
+            </button>}
+        
+        </div>
+        
         {!isTodoEmpty &&
-        <div>
-            <label>Status</label>
+        <div className="flex justify-center items-center gap-6">
+            <label className="px-4 py-2 ring-2 ring-accent rounded-lg flex items-center gap-2
+            hover:bg-yellow-400">Status</label>
             <select value={filterStatus} onChange={handleStatusChange}>
                 <option value='All'>All Todos</option>
                 <option value='Completed'>Completed Todos</option>
@@ -197,14 +225,15 @@ const TodoPage = () => {
         </div>
         }
 
-        {!isTodoEmpty && <button onClick={handleDeleteAll}>Delete All</button>}
 
         {!isTodoEmpty && 
-            <p>{completedTodos} / {todos.length} completed</p>
+            <p className="text-secondary text-right">
+                {completedTodos} / {todos.length} completed
+            </p>
         }
 
         {!isTodoEmpty? (
-            <div>
+            <div className="space-y-4">
                 {filteredTodos.map((item,index) => <TodoItem key={item.id} 
                 item={item} 
                 onTodoToggle={onTodoToggle} 

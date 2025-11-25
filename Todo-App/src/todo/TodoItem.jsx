@@ -1,4 +1,6 @@
+import { Check, ChevronDown, ChevronUp, SquarePen, Trash, X } from 'lucide-react';
 import React, { useState } from 'react'
+import CheckBox from './CheckBox';
 
 const TodoItem = ({item,onTodoToggle,onTodoDelete,onTodoTextUpdate,onMoveUp,onMoveDown,index,todosCount,onCategoryChange}) => {
 
@@ -17,29 +19,30 @@ const TodoItem = ({item,onTodoToggle,onTodoDelete,onTodoTextUpdate,onMoveUp,onMo
 
 
     const todoEditForm = (
-        <div>
-            <form onSubmit={handleEditFormSubmitted}>
-                <input type="text" name='todo'defaultValue={item.text} />
-                <button>Update</button>
+        <div className='flex justify-between items-center bg-gray-900 px-4 py-2'>
+            <form className='flex-1 flex items-center gap-2 px-2 ' onSubmit={handleEditFormSubmitted}>
+                <input className='flex-1 border-2 border-secondary px-4 py-2 rounded-lg font-body' type="text" name='todo'defaultValue={item.text} />
+                <button><Check/></button>
             </form>
-            <button onClick={()=>setShowEditTodo(false)}>Cancel</button>
+            <button className = 'text-red-400' onClick={()=>setShowEditTodo(false)}><X/></button>
         </div>
     )
     const todoItemDiv = (
-        <div>
-        <button disabled={index==0} onClick={()=>onMoveUp(index)}>🔼</button>
-        <button disabled={todosCount==index+1} onClick={()=>onMoveDown(index)}>🔽</button>
-        <input 
-        id={item.id}
-        checked={item.completed} 
-        type="checkbox" 
-        onChange={(e)=>onTodoToggle(item.id,e.target.checked)}
-        />
-        <label
-        style={{textDecoration: item.completed?'line-through':'none'}}
-        htmlFor={item.id}>{item.text}</label>
+        <div className='flex  items-center justify-between gap-4 hover:bg-gray-700 rounded-lg px-4 py-2 group'>
+            <div className='flex flex-col gap-1 text-secondary'>
+                 <button className='hover:bg-gray-700 rounded-md p-1 cursor-pointer' disabled={index==0} onClick={()=>onMoveUp(index)}>
+                    <ChevronUp/>
+                    </button>
+                 <button className='hover:bg-gray-700 rounded-md p-1 cursor-pointer'disabled={todosCount==index+1} onClick={()=>onMoveDown(index)}>
+                    <ChevronDown/>
+                 </button>
+            </div>
+        <div className='flex-1 flex items-center gap-4'>
+        <CheckBox id={item.id} checked={item.completed} onChange={(e)=>onTodoToggle(item.id,e.target.checked)} label={item.text}/>
+        </div>
 
-        <label htmlFor='filter-category'>
+        <div className='flex items-center gap-4'>
+             <label htmlFor='filter-category'>
             Category
         </label>
         <select id='filter-category' value={item.category} 
@@ -54,15 +57,21 @@ const TodoItem = ({item,onTodoToggle,onTodoDelete,onTodoTextUpdate,onMoveUp,onMo
             <option value='important'>Important</option>
             <option value='priority'>Priority</option>
         </select>
-        <button onClick={() => setShowEditTodo(true)}>Edit</button>
-        <button onClick={()=> onTodoDelete(item.id)}>
-            Delete
-        </button>
+        </div>
+        <div className='hidden group-hover:flex gap-4'>     
+            <button onClick={() => setShowEditTodo(true)}>
+                <SquarePen />
+            </button>
+            <button className='text-red-400' onClick={()=> onTodoDelete(item.id)}>
+                <Trash/>
+            </button>
+        </div>
+        
     </div>
     )
 
   return (
-    <div>
+    <div className='border-t border-secondary '>
         {showEditTodo ? todoEditForm: todoItemDiv}
     </div>
   )
